@@ -244,6 +244,26 @@ In this playbook, I am attempting to install docker on my Hetzner server. Checko
 I have used the following resource extensively to create the playbook and acquire more theory on docker https://community.hetzner.com/tutorials/howto-docker-install
 I also got inspired by this author to automate the installation of docker with ansible https://alexhernandez.info/articles/infrastructure/how-to-install-docker-using-ansible/
 
+The following command executes the playbook: 
+```commandline
+ansible-playbook -i inventory.ini playbook_install_docker.yaml
+```
+
+### Copy relevant files to the server
+Before I start the automation process of deploying the streamlit app on the server, I had to copy dockerfile, main.py, and requirements.txt to a directory (e.g. /home/git/stocks_app/) on my server. I created another playbook to automate this process, and I used the copy module as highlighted in this documentation https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/copy_module.html to complete this step. If this step is missing, this error would occur: 
+<img src="/images/missing_dockerfile_error.png">
+
+P.S. I could have performed git clone instead of copy as highlighted here https://linuxhandbook.com/clone-git-ansible/. <span style="color:red"> **Disclaimer: I didn't test this** </span> 
+
+#### Playbook_main
+In this playbook, I am automating the process of deploying the application. The steps involved are building the docker image from the dockerfile and starting the docker container. When starting the docker container, I am specifying the host port to be 8081 to avoid the mapping of the listening port to a random port. The following command executes the playbook: 
+```commandline
+ansible-playbook -i inventory.ini playbook_main.yaml
+```
+
+The streamlit app can be accessed here  http://46.62.220.105:8081/. This means the streamlit app is accessible at the IPv4 address of my server, and the app is listening on port 8081. 
+<span style="color:green"> **I have successfully deployed a simple streamlit app** </span>  🎉🎉🎉
+
 
 
 
