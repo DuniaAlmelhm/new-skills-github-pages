@@ -108,11 +108,45 @@ I got myself in a lock state with terraform because I ran terraform plan without
 It worked 🎉🎉🎉
 
 ## Containerize the tool with Docker 
+### Theory 
+Docker, as everyone knows, allows us to deploy, run, and manage applications in a containerized way. These containers contain the code, libraries, and dependencies needed to run the application as expected. The most cool thing about Docker is the ability to run different services on the same host due to this robust feature of isolated environment (container) for each service
+- There are two docker objects: 
+  1. Image: A template containing instructions for creating the docker container. This image is built from the dockerfile, which is a text file containing all the commands needed to build the image
+  2. Container: It is the running instance of the image. I can create many containers from the same image. 
+- Docker registry: storage of docker images 
+- Docker client: It is docker CLI that enables us to execute docker commands and interact with Docker API 
+- Docker API or Docker Host: It is the middleman between docker client and docker daemon 
+- Docker daemon: It is the part of docker that does the heavy lifting, such as building images and running containers
 
+Please refer to their official website https://docs.docker.com/get-started/docker-overview/ for more information 
 
+### Application
+At the root of my project, I created a dockerfile that does the following:
+1. Specify the Python version 
+2. Set up the desired working directory for my project inside the container
+3. Execute a command to install the necessary libraries defined in requirements.txt file 
+4. The Streamlit app inside the container is listening on port 8501 
+5. Configure the container to run the following command 
+    ``` commandline 
+    streamlit run main.py
+    ```
+I ran the following commands locally to make sure I can build the image from the dockerfile, and I can run a container from this image
+1. Build the image with name stocks_app/intro. The tag would be latest since it is not defined in the command. The . is the path to the dockerfile in the project 
+    ```commandline
+    docker build -t stocks_app/intro
+    ```
+2. Run the container with flag -p to publish the port. The service runs on host port 8081, and it is listening on port 8501 inside the container. I can choose whatever host port I want. See the documentation here https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/ for more information 
+    ```commandline
+    docker run -p 8081:8501  stocks_app/intro 
+    ```
+3. Run the container in detached mode while publishing the port 8501 as both host and container port. Detached mode means the application inside the container keeps on running in the background (even when terminal session is closed)
+    ```commandline
+    docker run -d -p 8501:8501  stocks_app/intro 
+    ```
 
-docker build -t stocks_app/intro . (-t is tag and . is path to the docker file) 
-docker run -p 8081:8501  stocks_app/intro (-p publish the port on host port 8081 and container port (the exposed one) 8501. I can choose whatever host port)
-docker run -d -p 8501:8501  stocks_app/intro (-d detach and run the container in the background) 
+Docker part is done, and we are ready for next part 🚀
+
+## Automate the deployment with Ansible 
+### Theory
 
 
