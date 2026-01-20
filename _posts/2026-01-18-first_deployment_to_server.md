@@ -264,6 +264,65 @@ ansible-playbook -i inventory.ini playbook_main.yaml
 The streamlit app can be accessed here  http://46.62.220.105:8081/. This means the streamlit app is accessible at the IPv4 address of my server, and the app is listening on port 8081. 
 <span style="color:green"> **I have successfully deployed a simple streamlit app** </span>  🎉🎉🎉
 
+#### SSH Setup 
+Running the ansible playbook main for example requires setting up the 2 flags -u and --ask-pass 
+```commandline
+ansible-playbook -i inventory.ini playbook_main.yaml -u root --ask-pass
+```
+To avoid specifying these two flags everytime, I added **remote_user: root** in the playbook which will eliminates the use of flag -u
+
+To avoid --ask-pass, I tried the following
+
+I created a pair of ssh key and add it to my ssh agent long time ago after following this documentation  https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent. 
+1. Start the ssh agent in the background to interact with the current terminal session 
+   ```commandline
+    eval "$(ssh-agent -s)"
+    ```
+2. Create ssh key pair using ed25519 algorithm. The flag -C is optional, and it means creating ssh key pair with comment:email address to facilitate identifying the key
+	```commandline
+    ssh-keygen -t ed25519 -C "your_email_address@gmail.com"
+    ```
+    This command prompts me to enter a file name to store the key and a passphrase. It then generates both public and private keys 
+3. Restart the ssh agent 
+    ```commandline
+    ssh-agent bash
+    ```
+4. According to ansible official documentation https://docs.ansible.com/projects/ansible/latest/inventory_guide/connection_details.html, I added my private ed25519 key to the agent
+    ```commandline
+    ssh-add ~/.ssh/id_ed25519
+    ```
+    However, I got this warning
+    <img src="/images/ed25519_warning.png" >
+5. To fix this warning, I needed to change the permission of my private key so that only the owner (me) can write and read the file (no other users can do any action). I ran the following commands:
+    ```commandline
+    chmod 600 ~/.ssh/id_ed25519
+    ssh-add ~/.ssh/id_ed25519
+    ansible-playbook -i inventory.ini playbook.yaml
+    ```
+    I got this error now
+    <img src="/images/unreachable_server_error.png" >
+6. To fix the error, I copied my public key to the server according to this https://www.ssh.com/academy/ssh/copy-id, so I can avoid accessing the server with a password 
+    ```commandline
+    ssh-copy-id -i ~/.ssh/id_ed25519.pub root@46.62.220.105
+    ```
+    This command basically connect to the server through the IPv4 address and copies the public ed25519 key to it. It prompts me to enter the password for the server, so it can finish adding the ed25519 key
+7. To check if the key is actually added, I connected to the server which prompted me to enter the passphrase to my ed25519 key. I then moved to the directory in which I have the file containing the ed25519 public key
+    ```commandline
+    ssh root@46.62.220.105
+    ls -all
+    cd .ssh
+    ls
+    cat authorized_keys
+    ```
+Now, I can finally run the playbook without the need to enter the authentication everytime
+```commandline
+ansible-playbook -i inventory.ini playbook_main.yaml
+```
+
+
+
+
+
 
 
 
