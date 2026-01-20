@@ -4,6 +4,7 @@ If yes, you are not alone.
 
 ![Chihuahua stare](https://media.tenor.com/47KEJ7yaVtoAAAAM/chihuahua-stare-at.gif)
 #### Here, I will be demonstrating the deployment of a simple streamlit app on a cloud server from Hetzner. I will be using Terraform to provision resources, Docker to containerize my web application, and ansible to automate the deployment. 
+Here is the repository in which all the magic happens https://github.com/DuniaAlmelhm/stocks_app
 
 ## Hetzner
 1. The API token got generated through Hetzner User Interface to authenticate when a request made to the API through terraform provider
