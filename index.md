@@ -1,5 +1,6 @@
 ---
-title: Ready, Set, Let's Learn Togather..... 
+title: Ready, Set, Let's Learn Together..... 
 ---
 
-"I will be exploring various aspects of DevOps in the upcoming few weeks..... Stay tuned :) "
+"Stay tuned 🤩🔥🚀"
+
