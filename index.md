@@ -1,4 +1,5 @@
 ---
-title: Welcome to my blog
+title: Ready, Set, Let's Learn Togather..... 
 ---
 
+"I will be exploring various aspects of DevOps in the upcoming few weeks..... Stay tuned :) "
